@@ -23,12 +23,6 @@ composer require justoverclock/theaudiodb-api:"*"
 
 ```sh
 composer update justoverclock/theaudiodb-api:"*"
-php flarum migrate
 php flarum cache:clear
 ```
 
-## Links
-
-- [Packagist](https://packagist.org/packages/justoverclock/theaudiodb-api)
-- [GitHub](https://github.com/justoverclock/theaudiodb-api)
-- [Discuss](https://discuss.flarum.org/d/PUT_DISCUSS_SLUG_HERE)
