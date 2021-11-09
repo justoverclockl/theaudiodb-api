@@ -50,24 +50,27 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
     }
 
     extend(DiscussionHero.prototype, 'items', function (items) {
-      items.add(
-        'artistDetailMusic',
-        <div class="artistWrapper">
-          <div id="containerArtist">
-            <div id="contentArtist">
-              <p class="artistDesc" id="descArtist" />
-              <div class="itemdescrip">
-                <div class="genreArtist" id="genreArtist" />
-                <div class="yearBorn" id="yearBorn" />
-                <div class="strcountry" id="strcountry" />
+      const isLoggedIn = app.session.user;
+      if (isLoggedIn) {
+        items.add(
+          'artistDetailMusic',
+          <div class="artistWrapper">
+            <div id="containerArtist">
+              <div id="contentArtist">
+                <p class="artistDesc" id="descArtist"/>
+                <div class="itemdescrip">
+                  <div class="genreArtist" id="genreArtist"/>
+                  <div class="yearBorn" id="yearBorn"/>
+                  <div class="strcountry" id="strcountry"/>
+                </div>
               </div>
             </div>
+            <div id="sidebarImgArtist">
+              <img className="imgArtist" id="imgArtists" src=""/>
+            </div>
           </div>
-          <div id="sidebarImgArtist">
-            <img className="imgArtist" id="imgArtists" src="" />
-          </div>
-        </div>
-      );
+        );
+      }
     });
   });
 });
