@@ -5,6 +5,7 @@
 A [Flarum](http://flarum.org) extension. TheAudioDB API integration for Flarum
 
 ![Immagine 2021-11-09 113332](https://user-images.githubusercontent.com/79002016/140908648-197232dc-d81f-488e-8357-e0ba2e5da325.png)
+![Immagine 2021-11-09 122002](https://user-images.githubusercontent.com/79002016/140915116-6eabd021-a782-432c-a21f-26a34d706ddc.png)
 
 
 ## Installation
