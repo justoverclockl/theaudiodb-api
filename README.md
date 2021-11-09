@@ -8,7 +8,8 @@ A [Flarum](http://flarum.org) extension. TheAudioDB API integration for Flarum. 
 This extension supports multiple languages (available on TheAudioDb.com), but remember that some artists/bands may not have details in your language. You can add missed translations directly into https://www.theaudiodb.com/ website 😎
 
 ![Immagine 2021-11-09 113332](https://user-images.githubusercontent.com/79002016/140908648-197232dc-d81f-488e-8357-e0ba2e5da325.png)
-![Immagine 2021-11-09 122002](https://user-images.githubusercontent.com/79002016/140915116-6eabd021-a782-432c-a21f-26a34d706ddc.png)
+![sss](https://user-images.githubusercontent.com/79002016/140955279-927704cf-98cc-496f-b340-f28717aa41e6.png)
+
 
 
 ## Installation
