@@ -30,7 +30,6 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
         .then(handleErrors)
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           m.redraw();
           const arrayElem = 'strBiography' + languageCode;
           if (data.artists[0][arrayElem] === null) {
