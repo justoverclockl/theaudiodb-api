@@ -1,13 +1,21 @@
+/*
+  __ _                              _ _
+ / _| |                            (_) |
+| |_| | __ _ _ __ _   _ _ __ ___    _| |_
+|  _| |/ _` | '__| | | | '_ ` _ \  | | __|
+| | | | (_| | |  | |_| | | | | | |_| | |_
+|_| |_|\__,_|_|   \__,_|_| |_| |_(_)_|\__|
+ */
+
 import app from 'flarum/forum/app';
 import { extend } from 'flarum/common/extend';
 import DiscussionHero from 'flarum/forum/components/DiscussionHero';
-import LinkButton from 'flarum/components/LinkButton';
-
 
 app.initializers.add('justoverclock/theaudiodb-api', () => {
-  extend(DiscussionHero.prototype, 'oncreate', function () {
+  extend(DiscussionHero.prototype, ['oncreate'], function () {
     const isLoggedIn = app.session.user;
-    const artistTitle = this.attrs.discussion.title().split(/\s+/).join('-');
+    const artistTitle = this.attrs.discussion.title().split(/\s+/).join('%20');
+    const languageCode = app.forum.attribute('justoverclock-theaudiodb-api.langCode') || 'EN';
 
     // gestiamo gli errori nella risposta
     function handleErrors(response) {
@@ -17,39 +25,49 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
       return response;
     }
 
-    // per evitare troppe richieste all'api, effettuiamo fetch solo per chi è registrato
     if (isLoggedIn) {
-      const GameApi = fetch('https://theaudiodb.com/api/v1/json/1/search.php?s=' + artistTitle)
+      const artistApi = fetch('https://theaudiodb.com/api/v1/json/1/search.php?s=' + artistTitle)
         .then(handleErrors)
         .then((response) => response.json())
         .then((data) => {
-          this.artist = data;
-          console.log(this.artist.artists[0])
+          console.log(data);
           m.redraw();
+          const arrayElem = 'strBiography' + languageCode;
+          if (data.artists[0][arrayElem] === null) {
+            data.artists[0][arrayElem] =
+              'Oops! Description is not available in your language unfortunately...You can contribute to TheAudioDB.com by adding information about this artists in your language.';
+          }
+          const descArt = (document.getElementById('descArtist').innerText = data.artists[0][arrayElem].substring(0, 400) + '...');
+          const thumbArtists = (document.getElementById('imgArtists').src = data.artists[0].strArtistThumb);
+          const genreArtist = (document.getElementById('genreArtist').innerText =
+            app.translator.trans('justoverclock-theaudiodb-api.forum.genres') + ': ' + data.artists[0].strStyle);
+          const yearBorn = (document.getElementById('yearBorn').innerText =
+            app.translator.trans('justoverclock-theaudiodb-api.forum.intFormedYear') + ': ' + data.artists[0].intFormedYear);
+          const countryArtist = (document.getElementById('strcountry').innerText =
+            app.translator.trans('justoverclock-theaudiodb-api.forum.countryart') + ': ' + data.artists[0].strCountry);
         })
         .catch((error) => console.log('This Artist does not exist ;) =>', artistTitle));
     }
-  extend(DiscussionHero.prototype, 'items', function (items) {
-    const imgArtist = this.artist.artists[0].strArtistThumb;
-    // non mostriamo l'html se non c'è nulla da mostrare
-    if (this.artist === undefined) {
-      return;
-    } else {
-      items.remove('title');
+
+    extend(DiscussionHero.prototype, 'items', function (items) {
       items.add(
         'artistDetailMusic',
         <div class="artistWrapper">
-        <div id="containerArtist">
-          <div id="contentArtist">
-            <p class="artistDesc">{this.artist.artists[0].strBiographyIT.substring(0,400) + '...'}</p>
+          <div id="containerArtist">
+            <div id="contentArtist">
+              <p class="artistDesc" id="descArtist" />
+              <div class="itemdescrip">
+                <div class="genreArtist" id="genreArtist" />
+                <div class="yearBorn" id="yearBorn" />
+                <div class="strcountry" id="strcountry" />
+              </div>
+            </div>
+          </div>
+          <div id="sidebarImgArtist">
+            <img className="imgArtist" id="imgArtists" src="" />
           </div>
         </div>
-      <div id="sidebarImgArtist">
-        <img className="imgArtist" src={imgArtist}/>
-      </div>
-        </div>
       );
-    }
-  })
-  })
+    });
+  });
 });

@@ -91,7 +91,7 @@ module.exports =
 /*!******************!*\
   !*** ./forum.js ***!
   \******************/
-/*! no static exports found */
+/*! no exports provided */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -116,18 +116,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var flarum_common_extend__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! flarum/forum/components/DiscussionHero */ "flarum/forum/components/DiscussionHero");
 /* harmony import */ var flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var flarum_components_LinkButton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! flarum/components/LinkButton */ "flarum/components/LinkButton");
-/* harmony import */ var flarum_components_LinkButton__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(flarum_components_LinkButton__WEBPACK_IMPORTED_MODULE_3__);
-
+/*
+  __ _                              _ _
+ / _| |                            (_) |
+| |_| | __ _ _ __ _   _ _ __ ___    _| |_
+|  _| |/ _` | '__| | | | '_ ` _ \  | | __|
+| | | | (_| | |  | |_| | | | | | |_| | |_
+|_| |_|\__,_|_|   \__,_|_| |_| |_(_)_|\__|
+ */
 
 
 
 flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializers.add('justoverclock/theaudiodb-api', function () {
-  Object(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__["extend"])(flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2___default.a.prototype, 'oncreate', function () {
-    var _this = this;
-
+  Object(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__["extend"])(flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2___default.a.prototype, ['oncreate'], function () {
     var isLoggedIn = flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.session.user;
-    var artistTitle = this.attrs.discussion.title().split(/\s+/).join('-'); // gestiamo gli errori nella risposta
+    var artistTitle = this.attrs.discussion.title().split(/\s+/).join('%20');
+    var languageCode = flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.forum.attribute('justoverclock-theaudiodb-api.langCode') || 'EN'; // gestiamo gli errori nella risposta
 
     function handleErrors(response) {
       if (!response.ok) {
@@ -135,43 +139,58 @@ flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializers.add('justov
       }
 
       return response;
-    } // per evitare troppe richieste all'api, effettuiamo fetch solo per chi è registrato
-
+    }
 
     if (isLoggedIn) {
-      var GameApi = fetch('https://theaudiodb.com/api/v1/json/1/search.php?s=' + artistTitle).then(handleErrors).then(function (response) {
+      var artistApi = fetch('https://theaudiodb.com/api/v1/json/1/search.php?s=' + artistTitle).then(handleErrors).then(function (response) {
         return response.json();
       }).then(function (data) {
-        _this.artist = data;
-        console.log(_this.artist.artists[0]);
+        console.log(data);
         m.redraw();
+        var arrayElem = 'strBiography' + languageCode;
+
+        if (data.artists[0][arrayElem] === null) {
+          data.artists[0][arrayElem] = 'Oops! Description is not available in your language unfortunately...You can contribute to TheAudioDB.com by adding information about this artists in your language.';
+        }
+
+        var descArt = document.getElementById('descArtist').innerText = data.artists[0][arrayElem].substring(0, 400) + '...';
+        var thumbArtists = document.getElementById('imgArtists').src = data.artists[0].strArtistThumb;
+        var genreArtist = document.getElementById('genreArtist').innerText = flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.translator.trans('justoverclock-theaudiodb-api.forum.genres') + ': ' + data.artists[0].strStyle;
+        var yearBorn = document.getElementById('yearBorn').innerText = flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.translator.trans('justoverclock-theaudiodb-api.forum.intFormedYear') + ': ' + data.artists[0].intFormedYear;
+        var countryArtist = document.getElementById('strcountry').innerText = flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.translator.trans('justoverclock-theaudiodb-api.forum.countryart') + ': ' + data.artists[0].strCountry;
       })["catch"](function (error) {
         return console.log('This Artist does not exist ;) =>', artistTitle);
       });
     }
 
     Object(flarum_common_extend__WEBPACK_IMPORTED_MODULE_1__["extend"])(flarum_forum_components_DiscussionHero__WEBPACK_IMPORTED_MODULE_2___default.a.prototype, 'items', function (items) {
-      var imgArtist = this.artist.artists[0].strArtistThumb; // non mostriamo l'html se non c'è nulla da mostrare
-
-      if (this.artist === undefined) {
-        return;
-      } else {
-        items.remove('title');
-        items.add('artistDetailMusic', m("div", {
-          "class": "artistWrapper"
-        }, m("div", {
-          id: "containerArtist"
-        }, m("div", {
-          id: "contentArtist"
-        }, m("p", {
-          "class": "artistDesc"
-        }, this.artist.artists[0].strBiographyIT.substring(0, 400) + '...'))), m("div", {
-          id: "sidebarImgArtist"
-        }, m("img", {
-          className: "imgArtist",
-          src: imgArtist
-        }))));
-      }
+      items.add('artistDetailMusic', m("div", {
+        "class": "artistWrapper"
+      }, m("div", {
+        id: "containerArtist"
+      }, m("div", {
+        id: "contentArtist"
+      }, m("p", {
+        "class": "artistDesc",
+        id: "descArtist"
+      }), m("div", {
+        "class": "itemdescrip"
+      }, m("div", {
+        "class": "genreArtist",
+        id: "genreArtist"
+      }), m("div", {
+        "class": "yearBorn",
+        id: "yearBorn"
+      }), m("div", {
+        "class": "strcountry",
+        id: "strcountry"
+      })))), m("div", {
+        id: "sidebarImgArtist"
+      }, m("img", {
+        className: "imgArtist",
+        id: "imgArtists",
+        src: ""
+      }))));
     });
   });
 });
@@ -186,17 +205,6 @@ flarum_forum_app__WEBPACK_IMPORTED_MODULE_0___default.a.initializers.add('justov
 /***/ (function(module, exports) {
 
 module.exports = flarum.core.compat['common/extend'];
-
-/***/ }),
-
-/***/ "flarum/components/LinkButton":
-/*!**************************************************************!*\
-  !*** external "flarum.core.compat['components/LinkButton']" ***!
-  \**************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-module.exports = flarum.core.compat['components/LinkButton'];
 
 /***/ }),
 

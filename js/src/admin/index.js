@@ -1,3 +1,11 @@
+import app from 'flarum/admin/app';
+
 app.initializers.add('justoverclock/theaudiodb-api', () => {
-  console.log('[justoverclock/theaudiodb-api] Hello, admin!');
+  app.extensionData.for('justoverclock-theaudiodb-api').registerSetting({
+    setting: 'justoverclock-theaudiodb-api.langCode',
+    name: 'justoverclock-theaudiodb-api.langCode',
+    type: 'text',
+    label: app.translator.trans('justoverclock-theaudiodb-api.admin.langcode'),
+    help: app.translator.trans('justoverclock-theaudiodb-api.admin.langcode-help'),
+  });
 });
