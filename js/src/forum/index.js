@@ -21,7 +21,7 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
 
     // per evitare troppe richieste all'api, effettuiamo fetch solo per chi è registrato
     if (isLoggedIn) {
-      const ArtistApi = await fetch('https://theaudiodb.com/api/v1/json/1/search.php?s=' + artistTitle)
+      const ArtistApi = await fetch('https://www.theaudiodb.com/api/v1/json/2/search.php?s=' + artistTitle)
         .then(async (response) => await response.json())
         .then((data) => {
           this.audiodb = data;
