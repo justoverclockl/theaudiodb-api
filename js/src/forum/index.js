@@ -33,7 +33,7 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
           }
         })
         .catch((error) => console.log('This Artist/band does not exist ;) =>', artistTitle));
-    }
+
 
     if (this.audiodb.artists === null) {
       const el = document.querySelector('li.item-artistDetailMusic');
@@ -50,25 +50,29 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
       const urlImg = this.audiodb.artists[0].strArtistThumb;
       $('#imgArtists').attr('src', urlImg);
     }
+    }
   });
   extend(DiscussionHero.prototype, 'items', function (items) {
-    items.add(
-      'artistDetailMusic',
-      <div class="artistWrapper">
-        <div id="containerArtist">
-          <div id="contentArtist">
-            <p class="artistDesc" id="descArtist" />
-            <div class="itemdescrip">
-              <div class="genreArtist" id="genreArtist" />
-              <div class="yearBorn" id="yearBorn" />
-              <div class="strcountry" id="strcountry" />
+    const isLoggedIn = app.session.user;
+    if (isLoggedIn) {
+      items.add(
+        'artistDetailMusic',
+        <div class="artistWrapper">
+          <div id="containerArtist">
+            <div id="contentArtist">
+              <p class="artistDesc" id="descArtist"/>
+              <div class="itemdescrip">
+                <div class="genreArtist" id="genreArtist"/>
+                <div class="yearBorn" id="yearBorn"/>
+                <div class="strcountry" id="strcountry"/>
+              </div>
             </div>
           </div>
+          <div id="sidebarImgArtist">
+            <img className="imgArtist" id="imgArtists" src=""/>
+          </div>
         </div>
-        <div id="sidebarImgArtist">
-          <img className="imgArtist" id="imgArtists" src="" />
-        </div>
-      </div>
-    );
+      );
+    }
   });
 });
