@@ -15,7 +15,7 @@ import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 app.initializers.add('justoverclock/theaudiodb-api', () => {
   extend(DiscussionHero.prototype, 'oncreate', async function () {
     const artistTitle = this.attrs.discussion.title().split(/\s+/).join('%20');
-    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.admin.apiKey')
+    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.apiKey')
 
     const languageCode = app.forum.attribute('justoverclock-theaudiodb-api.langCode') || 'EN';
     const isLoggedIn = app.session.user;
@@ -37,7 +37,7 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
         .catch((error) => console.log('This Artist/band does not exist =>', artistTitle));
 
 
-    if (this.audiodb.artists === null && !apiKey) {
+    if (this.audiodb.artists === null && apiKey) {
       const el = document.querySelector('li.item-artistDetailMusic');
       el.style.display = 'none';
     } else {
@@ -56,9 +56,9 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
   });
   extend(DiscussionHero.prototype, 'items', function (items) {
     const isLoggedIn = app.session.user;
-    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.admin.apiKey')
+    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.apiKey')
+
     if (isLoggedIn && apiKey) {
-      console.log(apiKey)
       items.add(
         'artistDetailMusic',
         <div class="artistWrapper">
