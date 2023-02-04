@@ -15,16 +15,18 @@ import DiscussionHero from 'flarum/forum/components/DiscussionHero';
 app.initializers.add('justoverclock/theaudiodb-api', () => {
   extend(DiscussionHero.prototype, 'oncreate', async function () {
     const artistTitle = this.attrs.discussion.title().split(/\s+/).join('%20');
+    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.admin.apiKey')
 
     const languageCode = app.forum.attribute('justoverclock-theaudiodb-api.langCode') || 'EN';
     const isLoggedIn = app.session.user;
 
     // per evitare troppe richieste all'api, effettuiamo fetch solo per chi è registrato
-    if (isLoggedIn) {
-      const ArtistApi = await fetch('https://www.theaudiodb.com/api/v1/json/2/search.php?s=' + artistTitle)
+    if (isLoggedIn && apiKey) {
+      const ArtistApi = await fetch(`https://www.theaudiodb.com/api/v1/json/${apiKey}/search.php?s=${artistTitle}`)
         .then(async (response) => await response.json())
         .then((data) => {
           this.audiodb = data;
+          console.log(this.audiodb)
           m.redraw();
           const arrayElem = 'strBiography' + languageCode;
           if (data.artists[0][arrayElem] === null) {
@@ -32,10 +34,10 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
               'Oops! Description is not available in your language unfortunately. You can contribute to TheAudioDB.com by adding information about this artists in your language.';
           }
         })
-        .catch((error) => console.log('This Artist/band does not exist ;) =>', artistTitle));
+        .catch((error) => console.log('This Artist/band does not exist =>', artistTitle));
 
 
-    if (this.audiodb.artists === null) {
+    if (this.audiodb.artists === null && !apiKey) {
       const el = document.querySelector('li.item-artistDetailMusic');
       el.style.display = 'none';
     } else {
@@ -54,7 +56,9 @@ app.initializers.add('justoverclock/theaudiodb-api', () => {
   });
   extend(DiscussionHero.prototype, 'items', function (items) {
     const isLoggedIn = app.session.user;
-    if (isLoggedIn) {
+    const apiKey = app.forum.attribute('justoverclock-theaudiodb-api.admin.apiKey')
+    if (isLoggedIn && apiKey) {
+      console.log(apiKey)
       items.add(
         'artistDetailMusic',
         <div class="artistWrapper">

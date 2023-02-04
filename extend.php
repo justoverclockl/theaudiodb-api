@@ -24,4 +24,5 @@ return [
     new Extend\Locales(__DIR__.'/locale'),
     (new Extend\Settings)
         ->serializeToForum('justoverclock-theaudiodb-api.langCode', 'justoverclock-theaudiodb-api.langCode')
+        ->serializeToForum('justoverclock-theaudiodb-api.admin.apiKey', 'justoverclock-theaudiodb-api.admin.apiKey')
 ];
